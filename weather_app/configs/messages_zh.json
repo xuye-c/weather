@@ -1,0 +1,18 @@
+{
+    "success": {
+        "insert": "天气记录添加成功",
+        "update": "天气记录更新成功",
+        "delete": "天气记录删除成功",
+        "upsert": "天气记录已保存"
+    },
+    "error": {
+        "database": {
+            "integrity": "记录已存在，无法重复添加",
+            "not_found": "未找到指定的天气记录",
+            "unknown": "数据库操作失败：{error}"
+        },
+        "general": {
+            "unknown": "发生未知错误，请稍后重试"
+        }
+    }
+}

@@ -1,0 +1,18 @@
+{
+    "success": {
+        "insert": "Weather record added successfully",
+        "update": "Weather record updated successfully",
+        "delete": "Weather record deleted successfully",
+        "upsert": "Weather record saved successfully"
+    },
+    "error": {
+        "database": {
+            "not_found": "Weather record not found",
+            "table_not_exist": "Database table not initialized, please run database initialization first",
+            "unknown": "Database operation failed: {error}"
+        },
+        "general": {
+            "unknown": "An unexpected error occurred, please try again later"
+        }
+    }
+}
