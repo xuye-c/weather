@@ -15,18 +15,26 @@ class InputManager:
         Raises:
             ValueError: if input is invalid
         """
-        if not city:
+        if not city or not city.strip():
             raise ValueError("City cannot be empty")
-
+        city = city.strip()
         try:
-            datetime.strptime(date, "%Y-%m-%d")
+            dt = datetime.strptime(date, "%Y-%m-%d")
         except ValueError:
             raise ValueError("Invalid date format")
 
         try:
-            float(temperature)
+            temp = float(temperature)
         except ValueError:
             raise ValueError("Temperature must be a number")
+
+        if temp < -225 or temp > 60:
+            raise ValueError("Temperature out of realistic range (-225 ~ 60°C)")
+        return {
+            "city": city,
+            "date": dt.strftime("%Y-%m-%d"),
+            "temperature": temp
+        }
 
     @staticmethod
     def insert(city, date, temperature):

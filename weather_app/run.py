@@ -9,11 +9,6 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
-@app.route("/new")
-def new_record():
-    print("New button clicked")
-    return "OK"
-
 
 @app.route("/search", methods=["POST"])
 def search():
