@@ -34,7 +34,7 @@ class Writer:
             raise e
 
         finally:
-            conn.close()
+            if conn: conn.close()
 
 
     @staticmethod
@@ -68,7 +68,7 @@ class Writer:
         except sqlite3.OperationalError as e:
             raise e
         finally:
-            conn.close()
+            if conn: conn.close()
 
 
 
@@ -102,4 +102,4 @@ class Writer:
         except sqlite3.OperationalError as e:
             raise e
         finally:
-            conn.close()
+            if conn: conn.close()

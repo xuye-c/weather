@@ -1,4 +1,7 @@
 from flask import Flask, render_template, request
+from controller.inputManager import InputManager
+from db.init_db import init_db
+
 
 app = Flask(__name__)
 
@@ -27,12 +30,13 @@ def insert():
     city = request.form.get("city")
     date = request.form.get("date")
     temperature = request.form.get("temperature")
+    result = InputManager.insert(city, date, temperature)
+    print(result)  
+    return result["message"]
 
-    print("city:", city)
-    print("date:", date)
-    print("temperature:", temperature)
-
-    return "OK"
+@app.before_first_request
+def setup():
+    init_db()
 
 if __name__ == '__main__':
     app.run(debug=True)
