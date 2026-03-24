@@ -22,5 +22,17 @@ def search():
 
     return f"Searching {city} from {start} to {end}"
 
+@app.route("/insert", methods=["POST"])
+def insert():
+    city = request.form.get("city")
+    date = request.form.get("date")
+    temperature = request.form.get("temperature")
+
+    print("city:", city)
+    print("date:", date)
+    print("temperature:", temperature)
+
+    return "OK"
+
 if __name__ == '__main__':
     app.run(debug=True)

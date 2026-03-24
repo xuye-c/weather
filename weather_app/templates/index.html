@@ -47,7 +47,8 @@
 <script>
 document.getElementById("new-btn").addEventListener("click", function() {
     console.log("新建");
-    fetch("/new");
+    const modal = new bootstrap.Modal(document.getElementById('inputModal'));
+    modal.show();
 });
 document.getElementById("search-form").addEventListener("submit", function(e) {
     e.preventDefault();
@@ -64,4 +65,5 @@ document.getElementById("search-form").addEventListener("submit", function(e) {
     });
 });
 </script>
+{% include "components/input.html" %}
 {% endblock %}
