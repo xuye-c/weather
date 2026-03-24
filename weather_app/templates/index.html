@@ -5,14 +5,22 @@
 {% block body %}
 <div class="container-fluid layout-container position-relative">
   <!-- 左上角工具栏 -->
-  <div class="tool-bar">
-    <button id="new-btn" class="btn btn-primary btn-sm tool-btn" type="button" title="新建">
-      新建
+    <div class="tool-bar d-flex align-items-center gap-2">
+    
+    <!-- 新建按钮 -->
+    <button id="new-btn" class="btn btn-primary btn-sm" type="button" title="新建">
+        新建
     </button>
-    <button id="search-btn" class="btn btn-outline-secondary" type="button" title="搜索">
-        搜索
-    </button>
-  </div>
+
+    <!-- 搜索表单（放右边） -->
+    <form id="search-form" class="d-flex gap-2 mb-0">
+        <input type="text" name="city" placeholder="City" class="form-control form-control-sm" required>
+        <input type="date" name="start_date" class="form-control form-control-sm">
+        <input type="date" name="end_date" class="form-control form-control-sm">
+        <button type="submit" class="btn btn-success btn-sm">Go</button>
+    </form>
+
+    </div>
 
   <div class="row" style="height: calc(100vh - 20px);">
     <!-- 左侧：Result 区，宽 2/3 -->
@@ -36,4 +44,24 @@
   </div>
 </div>
 
+<script>
+document.getElementById("new-btn").addEventListener("click", function() {
+    console.log("新建");
+    fetch("/new");
+});
+document.getElementById("search-form").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    fetch("/search", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.text())
+    .then(data => {
+        console.log(data);
+    });
+});
+</script>
 {% endblock %}
