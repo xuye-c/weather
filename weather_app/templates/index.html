@@ -59,9 +59,35 @@ document.getElementById("search-form").addEventListener("submit", function(e) {
         method: "POST",
         body: formData
     })
-    .then(res => res.text())
+    .then(res => res.json())
     .then(data => {
-        console.log(data);
+        const resultArea = document.getElementById("result-area");
+
+        if (data.status === "error") {
+            resultArea.innerHTML = `<p class="text-danger">${data.message}</p>`;
+            return;
+        }
+
+        if (data.data.length === 0) {
+            resultArea.innerHTML = "<p>No data found.</p>";
+            return;
+        }
+
+        // 渲染列表
+        let html = "<h5 class='mb-3'>Results</h5><ul class='list-group'>";
+
+        data.data.forEach(item => {
+            html += `
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>${item.date}</span>
+                    <span>${item.temperature} °C</span>
+                </li>
+            `;
+        });
+
+        html += "</ul>";
+
+        resultArea.innerHTML = html;
     });
 });
 </script>

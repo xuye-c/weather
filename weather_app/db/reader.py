@@ -1,6 +1,6 @@
 # db/reader.py
 
-from weather_app.db.dbManager import dbManager
+from db.dbManager import dbManager
 from datetime import datetime, timedelta
 
 class Reader:

@@ -1,5 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from db.writer import Writer
+from db.reader import Reader
 
 
 class InputManager:
@@ -35,7 +36,53 @@ class InputManager:
             "date": dt.strftime("%Y-%m-%d"),
             "temperature": temp
         }
+    @staticmethod
+    def search(city, start_date, end_date):
+        """
+        Handle search logic.
 
+        Returns:
+            dict:
+            {
+                "status": "success",
+                "data": [ {city, date, temperature}, ... ]
+            }
+        """
+
+        if not city or not city.strip():
+            return {"status": "error", "message": "City cannot be empty"}
+
+        city = city.strip()
+
+        # 情况 1：都没填 → 查全部
+        if not start_date and not end_date:
+            rows = Reader.get_by_city(city)
+
+        # 情况 2：只填一个 → 查单天
+        elif start_date and not end_date:
+            rows = Reader.get_by_city_and_range(city, start_date, start_date)
+
+        elif not start_date and end_date:
+            rows = Reader.get_by_city_and_range(city, end_date, end_date)
+
+        # 情况 3：两个都填 → 查范围
+        else:
+            rows = Reader.get_by_city_and_range(city, start_date, end_date)
+
+        # 转成前端友好格式
+        data = [
+            {
+                "city": r[0],
+                "date": r[1],
+                "temperature": r[2]
+            }
+            for r in rows
+        ]
+
+        return {
+            "status": "success",
+            "data": data
+        }
     @staticmethod
     def insert(city, date, temperature):
         """

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from controller.inputManager import InputManager
 from db.init_db import init_db
 
@@ -15,10 +15,12 @@ def search():
     city = request.form.get("city")
     start = request.form.get("start_date")
     end = request.form.get("end_date")
+    result = InputManager.search(city, start, end)
 
-    print(city, start, end)
+    print(result)  # debug
 
-    return f"Searching {city} from {start} to {end}"
+    return jsonify(result)
+
 
 @app.route("/insert", methods=["POST"])
 def insert():
