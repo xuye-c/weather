@@ -30,8 +30,8 @@ class Writer:
             )
             conn.commit()
 
-        except sqlite3.IntegrityError:
-            raise Exception("Record already exists for this city and date")
+        except sqlite3.IntegrityError as e:
+            raise e
 
         finally:
             conn.close()
@@ -50,19 +50,26 @@ class Writer:
         Returns:
             int: Number of rows affected (0 if no record found)
         """
-        conn = dbManager.get_connection()
-        cursor = conn.cursor()
+        conn = None
+        try:
+            conn = dbManager.get_connection()
+            cursor = conn.cursor()
 
-        cursor.execute(
-            "UPDATE weather SET temperature=? WHERE city=? AND date=?",
-            (temperature, city, date)
-        )
+            cursor.execute(
+                "UPDATE weather SET temperature=? WHERE city=? AND date=?",
+                (temperature, city, date)
+            )
 
-        conn.commit()
-        affected = cursor.rowcount
-        conn.close()
+            conn.commit()
+            affected = cursor.rowcount
+            conn.close()
 
-        return affected
+            return affected
+        except sqlite3.OperationalError as e:
+            raise e
+        finally:
+            conn.close()
+
 
 
     @staticmethod
@@ -77,16 +84,22 @@ class Writer:
         Returns:
             int: Number of rows deleted (0 if no record found)
         """
-        conn = dbManager.get_connection()
-        cursor = conn.cursor()
+        conn = None
+        try:
+            conn = dbManager.get_connection()
+            cursor = conn.cursor()
 
-        cursor.execute(
-            "DELETE FROM weather WHERE city=? AND date=?",
-            (city, date)
-        )
+            cursor.execute(
+                "DELETE FROM weather WHERE city=? AND date=?",
+                (city, date)
+            )
 
-        conn.commit()
-        affected = cursor.rowcount
-        conn.close()
+            conn.commit()
+            affected = cursor.rowcount
+            conn.close()
 
-        return affected
+            return affected
+        except sqlite3.OperationalError as e:
+            raise e
+        finally:
+            conn.close()
