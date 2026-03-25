@@ -14,17 +14,17 @@
         <form id="input-form">
           <div class="mb-2">
             <label>City</label>
-            <input type="text" name="city" class="form-control" required>
+            <input type="text" name="city" id="input-city" class="form-control" required>
           </div>
 
           <div class="mb-2">
             <label>Date</label>
-            <input type="date" name="date" class="form-control" required>
+            <input type="date" name="date" id="input-date" class="form-control" required>
           </div>
 
           <div class="mb-2">
             <label>Temperature</label>
-            <input type="number" name="temperature" class="form-control" step="0.1" required>
+            <input type="number" name="temperature" id="input-temp" class="form-control" step="0.1" required>
           </div>
         </form>
       </div>
@@ -43,14 +43,44 @@
     const form = document.getElementById("input-form");
     const formData = new FormData(form);
 
-    fetch("/insert", {
+    const data = {
+        city: formData.get("city"),
+        date: formData.get("date"),
+        temperature: formData.get("temperature")
+    };
+
+    const mode = this.dataset.mode || "insert";
+
+    const url = mode === "edit" ? "/update" : "/insert";
+
+    fetch(url, {
         method: "POST",
-        body: formData
+        body: new URLSearchParams(data)
     })
     .then(res => res.text())
+    .then(msg => {
+        console.log(msg);
 
-    // 关闭弹窗
-    const modal = bootstrap.Modal.getInstance(document.getElementById('inputModal'));
-    modal.hide();
-});
+        const modal = bootstrap.Modal.getInstance(document.getElementById('inputModal'));
+        modal.hide();
+
+        // 刷新页面（简单粗暴）
+        location.reload();
+        });
+    });
+    function openEditModal(city, date, temp) {
+        document.getElementById("input-city").value = city;
+        document.getElementById("input-date").value = date;
+        document.getElementById("input-temp").value = temp;
+
+        // 禁止修改 city + date
+        document.getElementById("input-city").disabled = true;
+        document.getElementById("input-date").disabled = true;
+
+        const modal = new bootstrap.Modal(document.getElementById('inputModal'));
+        modal.show();
+
+        // 标记是 edit 模式
+        document.getElementById("save-btn").dataset.mode = "edit";
+    }
 </script>

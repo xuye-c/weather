@@ -107,3 +107,24 @@ class InputManager:
                 "status": "error",
                 "message": str(e)
             }
+        
+    @staticmethod
+    def update(city, date, temperature):
+        try:
+            affected = Writer.update(city, date, float(temperature))
+            if affected == 0:
+                return {"status": "error", "message": "Record not found"}
+            return {"status": "success", "message": "Updated"}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
+
+    @staticmethod
+    def delete(city, date):
+        try:
+            affected = Writer.delete(city, date)
+            if affected == 0:
+                return {"status": "error", "message": "Record not found"}
+            return {"status": "success", "message": "Deleted"}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}

@@ -9,6 +9,23 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
+@app.route("/update", methods=["POST"])
+def update():
+    city = request.form.get("city")
+    date = request.form.get("date")
+    temperature = request.form.get("temperature")
+
+    result = InputManager.update(city, date, temperature)
+    return result["message"]
+
+
+@app.route("/delete", methods=["POST"])
+def delete():
+    city = request.form.get("city")
+    date = request.form.get("date")
+
+    result = InputManager.delete(city, date)
+    return result["message"]
 
 @app.route("/search", methods=["POST"])
 def search():
