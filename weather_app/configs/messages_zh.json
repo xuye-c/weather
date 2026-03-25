@@ -32,9 +32,10 @@
         "edit": "编辑",
         "delete": "删除",
         "confirm_delete": "确认删除{city}, {date}数据？",
-        "legend_title": "图区",
+        "legend_title": "实时天气",
         "terminal_title":"终端",
-        "result_title":"搜索结果"
+        "result_title":"搜索结果",
+        "legend_nodata": "无天气数据"
 
     }
 }

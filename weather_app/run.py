@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify, session
 from controller.inputManager import InputManager
 from configs.messageManager import MessageManager
 from db.init_db import init_db
+from service.weather_api import WeatherAPI
 
 msg = MessageManager()
 app = Flask(__name__)
@@ -55,11 +56,13 @@ def search():
     city = request.form.get("city")
     start = request.form.get("start_date")
     end = request.form.get("end_date")
-    result = InputManager.search(city, start, end)
+    db_result = InputManager.search(city, start, end)
+    weather_result = WeatherAPI.get_current_weather(city)
 
-    print(result)  # debug
-
-    return jsonify(result)
+    return jsonify({
+        "db": db_result,
+        "weather": weather_result
+    })
 
 
 @app.route("/insert", methods=["POST"])

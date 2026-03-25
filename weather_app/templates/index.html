@@ -104,22 +104,44 @@ document.getElementById("search-form").addEventListener("submit", function(e) {
     })
     .then(res => res.json())
     .then(data => {
-        const resultArea = document.getElementById("result-area");
+        console.log("FULL DATA:", data);
+        // ===== 更新天气区域 =====
+        const db = data.db;
+        const weather = data.weather;
+        const weatherArea = document.getElementById("weather-area");
 
-        if (data.status === "error") {
-            resultArea.innerHTML = `<p class="text-danger">${data.message}</p>`;
+        if (!data.weather) {
+            weatherArea.innerHTML = "<p>No weather data.</p>";
+        } else {
+            if (!weather || weather.status !== "success") {
+                weatherArea.innerHTML = "<p>No weather data.</p>";
+            } else {
+                const w = weather.data;
+                weatherArea.innerHTML = `
+                    <div>
+                        <strong>${w.city}</strong><br>
+                        Temp: ${w.temp} °C<br>
+                        ${w.weather}<br>
+                        Humidity: ${w.humidity}%
+                    </div>
+                `;
+            }
+        }
+        const resultArea = document.getElementById("result-area");
+        if (db.status === "error") {
+            resultArea.innerHTML = `<p class="text-danger">${db.message}</p>`;
             return;
         }
 
-        if (data.data.length === 0) {
+        if (!db.data || db.data.length === 0) {
             resultArea.innerHTML = "<p>No data found.</p>";
             return;
         }
 
         // 渲染列表
-        let html = "<h5 class='mb-3'>Results</h5><ul class='list-group'>";
+        let html = "<h5 class='mb-3'>{{msg.get('ui.result_title')}}</h5><ul class='list-group'>";
 
-        data.data.forEach(item => {
+        db.data.forEach(item => {
             html += `
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                 

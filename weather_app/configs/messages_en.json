@@ -32,9 +32,10 @@
         "edit": "Edit",
         "delete": "Delete",
         "confirm_delete": "Delete record for {city} on {date}?",
-        "legend_title": "Legend",
+        "legend_title": "Current Weather",
         "terminal_title":"Terminal",
-        "result_title":"Results"
+        "result_title":"Results",
+        "legend_nodata": "No Weather Data"
 
     }
 }
