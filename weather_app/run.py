@@ -1,13 +1,36 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session
 from controller.inputManager import InputManager
+from configs.messageManager import MessageManager
 from db.init_db import init_db
 
-
+msg = MessageManager()
 app = Flask(__name__)
+app.secret_key = 'abcd1234'
+
+@app.before_request
+def setup_before_request():
+    """每次请求前执行，确保用户语言设置"""
+    user_lang = session.get('lang')
+    if user_lang and user_lang in msg.get_available_languages():
+        msg.set_language(user_lang)
+
+@app.route("/set_language", methods=["POST"])
+def set_language():
+    lang = request.json.get("lang")
+
+    session["lang"] = lang   
+    msg.set_language(lang)
+
+    return jsonify({"success": True})
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template(
+        "index.html",
+        msg = msg,
+        languages=msg.get_available_languages(),
+        current_lang=msg.get_language()
+    )
 
 @app.route("/update", methods=["POST"])
 def update():

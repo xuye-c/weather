@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta
 from db.writer import Writer
 from db.reader import Reader
+from configs.messageManager import MessageManager
+import sqlite3
 
-
+msg = MessageManager()
 class InputManager:
     """
     Handles user input validation and coordinates DB write operations.
@@ -17,20 +19,36 @@ class InputManager:
             ValueError: if input is invalid
         """
         if not city or not city.strip():
-            raise ValueError("City cannot be empty")
+            #raise ValueError("City cannot be empty")
+            return {
+                "status": "error",
+                "message": msg.get("error.input.city_empty")
+            }
         city = city.strip()
         try:
             dt = datetime.strptime(date, "%Y-%m-%d")
         except ValueError:
-            raise ValueError("Invalid date format")
+            #raise ValueError("Invalid date format")
+            return {
+                "status": "error",
+                "message": msg.get("error.input.invalid_date")
+            }
 
         try:
             temp = float(temperature)
         except ValueError:
-            raise ValueError("Temperature must be a number")
+            #raise ValueError("Temperature must be a number")
+            return {
+                "status": "error",
+                "message": msg.get("error.input.invalid_temp")
+            }
 
         if temp < -225 or temp > 60:
-            raise ValueError("Temperature out of realistic range (-225 ~ 60°C)")
+            #raise ValueError("Temperature out of realistic range (-225 ~ 60°C)")
+            return {
+                "status": "error",
+                "message": msg.get("error.input.temp_outofrange")
+            }
         return {
             "city": city,
             "date": dt.strftime("%Y-%m-%d"),
@@ -94,37 +112,64 @@ class InputManager:
         # 1. validate
         InputManager.validate(city, date, temperature)
 
-        # 2. 写数据库
         try:
             Writer.insert(city, date, float(temperature))
+
             return {
                 "status": "success",
-                "message": "Insert successful"
+                "message": msg.get("success.insert")
             }
 
-        except Exception as e:
+        except sqlite3.IntegrityError:
             return {
                 "status": "error",
-                "message": str(e)
+                "message": msg.get("error.database.duplicate")
             }
-        
+
+        except Exception:
+            return {
+                "status": "error",
+                "message": msg.get("error.database.unknown")
+            }
     @staticmethod
     def update(city, date, temperature):
         try:
             affected = Writer.update(city, date, float(temperature))
+
             if affected == 0:
-                return {"status": "error", "message": "Record not found"}
-            return {"status": "success", "message": "Updated"}
-        except Exception as e:
-            return {"status": "error", "message": str(e)}
+                return {
+                    "status": "error",
+                    "message": msg.get("error.database.not_found")
+                }
 
+            return {
+                "status": "success",
+                "message": msg.get("success.update")
+            }
 
+        except Exception:
+            return {
+                "status": "error",
+                "message": msg.get("error.database.unknown")
+            }
     @staticmethod
     def delete(city, date):
         try:
             affected = Writer.delete(city, date)
+
             if affected == 0:
-                return {"status": "error", "message": "Record not found"}
-            return {"status": "success", "message": "Deleted"}
-        except Exception as e:
-            return {"status": "error", "message": str(e)}
+                return {
+                    "status": "error",
+                    "message": msg.get("error.database.not_found")
+                }
+
+            return {
+                "status": "success",
+                "message": msg.get("success.delete")
+            }
+
+        except Exception:
+            return {
+                "status": "error",
+                "message": msg.get("error.database.unknown")
+            }

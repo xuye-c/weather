@@ -2,17 +2,39 @@
     "success": {
         "insert": "Weather record added successfully",
         "update": "Weather record updated successfully",
-        "delete": "Weather record deleted successfully",
-        "upsert": "Weather record saved successfully"
+        "delete": "Weather record deleted successfully"
     },
     "error": {
-        "database": {
-            "not_found": "Weather record not found",
-            "table_not_exist": "Database table not initialized, please run database initialization first",
-            "unknown": "Database operation failed: {error}"
+        "input": {
+        "city_empty": "City cannot be empty",
+        "invalid_date": "Invalid date format",
+        "invalid_temp": "Temperature must be a number",
+        "temp_outofrange": "Temperature out of realistic range(-225 ~ 60°C)"
         },
-        "general": {
-            "unknown": "An unexpected error occurred, please try again later"
+        "database": {
+        "duplicate": "Record already exists",
+        "not_found": "Record not found",
+        "unknown": "Unknown Error"
         }
+    },
+    "ui":{
+        "new": "New",
+        "start_date": "Start Date",
+        "end_date": "End Date",
+        "search": "GO",
+        "city_placeholder": "input City Name",
+        "new_record": "New Record",
+        "city": "City",
+        "date": "Date",
+        "temperature": "Temperature",
+        "cancel": "Cancel",
+        "save": "Save",
+        "edit": "Edit",
+        "delete": "Delete",
+        "confirm_delete": "Delete record for {city} on {date}?",
+        "legend_title": "Legend",
+        "terminal_title":"Terminal",
+        "result_title":"Results"
+
     }
 }

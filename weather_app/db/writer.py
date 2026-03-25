@@ -30,8 +30,8 @@ class Writer:
             )
             conn.commit()
 
-        except sqlite3.IntegrityError as e:
-            raise e
+        except sqlite3.IntegrityError:
+            raise
 
         finally:
             if conn: conn.close()
@@ -65,8 +65,8 @@ class Writer:
             conn.close()
 
             return affected
-        except sqlite3.OperationalError as e:
-            raise e
+        except sqlite3.IntegrityError:
+            raise
         finally:
             if conn: conn.close()
 
@@ -99,7 +99,7 @@ class Writer:
             conn.close()
 
             return affected
-        except sqlite3.OperationalError as e:
-            raise e
+        except sqlite3.IntegrityError:
+            raise
         finally:
             if conn: conn.close()
