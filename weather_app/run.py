@@ -71,8 +71,7 @@ def insert():
     date = request.form.get("date")
     temperature = request.form.get("temperature")
     result = InputManager.insert(city, date, temperature)
-    print(result)  
-    return result["message"]
+    return jsonify(result)
 
 @app.before_first_request
 def setup():

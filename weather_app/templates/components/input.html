@@ -65,7 +65,11 @@
         modal.hide();
 
         // 刷新页面（简单粗暴）
-        location.reload();
+        //location.reload();
+        Utils.logToTerminal(Utils.getMessage("success.insert"), "success");
+        const searchForm = document.getElementById("search-form");
+        DataHandler.handleSearch(new FormData(searchForm));
+        
         });
     });
     function openEditModal(city, date, temp) {
