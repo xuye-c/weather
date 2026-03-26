@@ -202,7 +202,7 @@ const DataHandler = {
     },
     
     handleEdit: function(city, date, temperature) {
-        fetch("/edit", {
+        fetch("/update", {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -216,7 +216,14 @@ const DataHandler = {
         .then(res => res.text())
         .then(msg => {
             Utils.logToTerminal(msg, "success");
-            location.reload();
+            // 关闭模态框
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+            if (modal) modal.hide();
+            
+            // 重新执行当前搜索，更新列表
+            const searchForm = document.getElementById("search-form");
+            const formData = new FormData(searchForm);
+            DataHandler.handleSearch(formData);
         })
         .catch(error => {
             Utils.logToTerminal("Edit failed: " + error, "error");
@@ -296,7 +303,7 @@ const ModalHandler = {
                 const modal = bootstrap.Modal.getInstance(editModal);
                 if (modal) modal.hide();
             } else {
-                Utils.logToTerminal("Please enter a valid temperature", "error");
+                Utils.logToTerminal(Utils.getMessage("info.temp_outofrange"), "error");
             }
         });
         
