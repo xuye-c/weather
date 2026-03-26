@@ -110,7 +110,12 @@ class InputManager:
             dict: result message
         """
         # 1. validate
-        InputManager.validate(city, date, temperature)
+        validation_result =InputManager.validate(city, date, temperature)
+        if validation_result.get("status") == "error":
+                return validation_result
+        city = validation_result["city"]
+        date = validation_result["date"]
+        temperature = validation_result["temperature"]
 
         try:
             Writer.insert(city, date, float(temperature))

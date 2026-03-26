@@ -20,26 +20,5 @@
     },
     "info":{
         "no_data": "City Data Not Found"
-    },
-    "ui":{
-        "new": "New",
-        "start_date": "Start Date",
-        "end_date": "End Date",
-        "search": "GO",
-        "city_placeholder": "input City Name",
-        "new_record": "New Record",
-        "city": "City",
-        "date": "Date",
-        "temperature": "Temperature",
-        "cancel": "Cancel",
-        "save": "Save",
-        "edit": "Edit",
-        "delete": "Delete",
-        "confirm_delete": "Delete record for {city} on {date}?",
-        "legend_title": "Current Weather",
-        "terminal_title":"Terminal",
-        "result_title":"Results",
-        "legend_nodata": "No Weather Data"
-
     }
 }
