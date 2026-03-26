@@ -1,12 +1,50 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, Response
 from controller.inputManager import InputManager
 from configs.messageManager import MessageManager
 from db.init_db import init_db
 from service.weather_api import WeatherAPI
+from service.export import export_manager
+from datetime import datetime
 
 msg = MessageManager()
 app = Flask(__name__)
 app.secret_key = 'abcd1234'
+
+@app.route("/api/export/<format>", methods=["GET", "POST"])
+def export_data(format):
+    """
+    导出数据接口
+    支持格式: json, csv, xml, markdown, pdf
+    """
+    # 获取参数
+    if request.method == "POST":
+        city = request.form.get("city")
+        start_date = request.form.get("start_date")
+        end_date = request.form.get("end_date")
+    else:
+        city = request.args.get("city")
+        start_date = request.args.get("start_date")
+        end_date = request.args.get("end_date")
+    
+    # 调用导出管理器
+    content, mimetype, extension, error = export_manager.export(
+        format, city, start_date, end_date
+    )
+    
+    if error:
+        return jsonify({"status": "error", "message": error}), 400
+    
+    filename = f"weather_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{extension}"
+    
+    return Response(content, mimetype=mimetype,
+                   headers={"Content-Disposition": f"attachment; filename={filename}"})
+
+@app.route("/api/export/formats", methods=["GET"])
+def get_export_formats():
+    """获取支持的导出格式"""
+    return jsonify({
+        "formats": export_manager.get_supported_formats()
+    })
 
 @app.before_request
 def setup_before_request():

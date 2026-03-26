@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<weather_records export_date="2026-03-26 05:37:54" record_count="11">
+  <record>
+    <city>Beijing</city>
+    <date>2024-03-26</date>
+    <temperature unit="celsius">22.5</temperature>
+  </record>
+  <record>
+    <city>Beijing</city>
+    <date>2024-03-27</date>
+    <temperature unit="celsius">19.0</temperature>
+  </record>
+  <record>
+    <city>Durham</city>
+    <date>2003-01-02</date>
+    <temperature unit="celsius">5.0</temperature>
+  </record>
+  <record>
+    <city>Shanghai</city>
+    <date>2024-03-26</date>
+    <temperature unit="celsius">20.3</temperature>
+  </record>
+  <record>
+    <city>Suzhou</city>
+    <date>2022-12-03</date>
+    <temperature unit="celsius">3.0</temperature>
+  </record>
+  <record>
+    <city>Suzhou</city>
+    <date>2022-12-04</date>
+    <temperature unit="celsius">10.0</temperature>
+  </record>
+  <record>
+    <city>Suzhou</city>
+    <date>2022-12-05</date>
+    <temperature unit="celsius">11.0</temperature>
+  </record>
+  <record>
+    <city>Suzhou</city>
+    <date>2022-12-06</date>
+    <temperature unit="celsius">9.0</temperature>
+  </record>
+  <record>
+    <city>Suzhou</city>
+    <date>2022-12-07</date>
+    <temperature unit="celsius">13.0</temperature>
+  </record>
+  <record>
+    <city>Suzhou</city>
+    <date>2022-12-08</date>
+    <temperature unit="celsius">6.0</temperature>
+  </record>
+  <record>
+    <city>Suzhou</city>
+    <date>2022-12-09</date>
+    <temperature unit="celsius">0.0</temperature>
+  </record>
+</weather_records>

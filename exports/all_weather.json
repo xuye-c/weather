@@ -1,0 +1,57 @@
+[
+  {
+    "city": "Beijing",
+    "date": "2024-03-26",
+    "temperature": 22.5
+  },
+  {
+    "city": "Beijing",
+    "date": "2024-03-27",
+    "temperature": 19.0
+  },
+  {
+    "city": "Durham",
+    "date": "2003-01-02",
+    "temperature": 5.0
+  },
+  {
+    "city": "Shanghai",
+    "date": "2024-03-26",
+    "temperature": 20.3
+  },
+  {
+    "city": "Suzhou",
+    "date": "2022-12-03",
+    "temperature": 3.0
+  },
+  {
+    "city": "Suzhou",
+    "date": "2022-12-04",
+    "temperature": 10.0
+  },
+  {
+    "city": "Suzhou",
+    "date": "2022-12-05",
+    "temperature": 11.0
+  },
+  {
+    "city": "Suzhou",
+    "date": "2022-12-06",
+    "temperature": 9.0
+  },
+  {
+    "city": "Suzhou",
+    "date": "2022-12-07",
+    "temperature": 13.0
+  },
+  {
+    "city": "Suzhou",
+    "date": "2022-12-08",
+    "temperature": 6.0
+  },
+  {
+    "city": "Suzhou",
+    "date": "2022-12-09",
+    "temperature": 0.0
+  }
+]

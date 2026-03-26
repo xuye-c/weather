@@ -1,5 +1,5 @@
 # db/reader.py
-
+import sqlite3
 from db.dbManager import dbManager
 from datetime import datetime, timedelta
 
@@ -7,7 +7,18 @@ class Reader:
     """
     Handles all read operations from the weather database.
     """
+    # db/reader.py
 
+    @staticmethod
+    def get_all():
+        """获取所有记录"""
+        conn = dbManager.get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT city, date, temperature FROM weather ORDER BY city, date")
+        rows = cursor.fetchall()
+        conn.close()
+        return rows
+    
     @staticmethod
     def get_by_city(city):
         """
@@ -135,3 +146,37 @@ class Reader:
             "missing_dates": missing_dates,
             "existing_dates": list(existing_dates)
         }
+    # db/reader.py - 在 Reader 类中添加新方法
+
+    @staticmethod
+    def get_by_city_and_range_fixed(city, start_date=None, end_date=None):
+        """
+    get_by_city_and_range
+        """
+        conn = dbManager.get_connection()
+        cursor = conn.cursor()
+        
+        if start_date and end_date:
+            cursor.execute(
+                "SELECT city, date, temperature FROM weather WHERE city=? AND date BETWEEN ? AND ? ORDER BY date",
+                (city, start_date, end_date)
+            )
+        elif start_date:
+            cursor.execute(
+                "SELECT city, date, temperature FROM weather WHERE city=? AND date=? ORDER BY date",
+                (city, start_date)
+            )
+        elif end_date:
+            cursor.execute(
+                "SELECT city, date, temperature FROM weather WHERE city=? AND date=? ORDER BY date",
+                (city, end_date)
+            )
+        else:
+            cursor.execute(
+                "SELECT city, date, temperature FROM weather WHERE city=? ORDER BY date",
+                (city,)
+            )
+        
+        rows = cursor.fetchall()
+        conn.close()
+        return rows
