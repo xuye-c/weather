@@ -54,168 +54,302 @@
 </div>
 
 <script>
+// 全局消息对象
 const messages = JSON.parse('{{ msg._messages | tojson | safe }}');
 
-// 辅助函数：获取消息
-function getMessage(key, params = {}) {
-    let value = messages;
-    const keys = key.split('.');
-    
-    for (const k of keys) {
-        if (value && value[k] !== undefined) {
-            value = value[k];
-        } else {
-            return key; // 返回 key 作为 fallback
-        }
-    }
-    
-    if (typeof value === 'string' && params) {
-        // 简单的模板替换
-        return value.replace(/{(\w+)}/g, (match, param) => params[param] || match);
-    }
-    
-    return value || key;
-}
-
-document.getElementById("lang-switch").addEventListener("change", function () {
-    const lang = this.value;
-
-    fetch("/set_language", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ lang: lang })
-    })
-    .then(() => location.reload());
-});
-document.getElementById("new-btn").addEventListener("click", function() {
-    const modal = new bootstrap.Modal(document.getElementById('inputModal'));
-    modal.show();
-});
-document.getElementById("search-form").addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    const formData = new FormData(this);
-
-    fetch("/search", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        console.log("FULL DATA:", data);
-        // ===== 更新天气区域 =====
-        const db = data.db;
-        const weather = data.weather;
-        const weatherArea = document.getElementById("weather-area");
+// 工具函数模块
+const Utils = {
+    getMessage: function(key, params = {}) {
+        let value = messages;
+        const keys = key.split('.');
         
-        if (weather.status === "error") {
-            logToTerminal(weather.message, "error");
-            weatherArea.innerHTML = "";
-        } else {
-            const w = weather.data;
-            weatherArea.innerHTML = `
-                <div>
-                    <strong>${w.city}</strong><br>
-                    Temp: ${w.temp} °C<br>
-                    ${w.weather}<br>
-                    Humidity: ${w.humidity}%
-                </div>
-            `;
+        for (const k of keys) {
+            if (value && value[k] !== undefined) {
+                value = value[k];
+            } else {
+                return key;
+            }
         }
-
-        const resultArea = document.getElementById("result-area");
-        if (db.status === "error") {
-            logToTerminal(db.message, "error");
+        
+        if (typeof value === 'string' && params) {
+            return value.replace(/{(\w+)}/g, (match, param) => params[param] || match);
         }
-        logToTerminal(getMessage("success.search") || "Search completed", "success");
+        
+        return value || key;
+    },
+    
+    logToTerminal: function(message, type = "info") {
+        const terminal = document.getElementById("terminal-log");
+        if (!terminal) return;
+        
+        let color = "black";
+        if (type === "error") color = "red";
+        if (type === "success") color = "green";
+        
+        terminal.innerHTML += `<div style="color:${color}">> ${message}</div>`;
+        terminal.scrollTop = terminal.scrollHeight;
+    }
+};
 
-        if (!db.data || db.data.length === 0) {
-            logToTerminal(getMessage("info.no_data"));
-            resultArea.innerHTML = "";
-            return;
-        }
-
-        // 渲染列表
-        let html = "<h5 class='mb-3'>{{msg.get('ui.result_title')}}</h5><ul class='list-group'>";
-
-        db.data.forEach(item => {
-            html += `
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                
-                    <div>
-                        <strong>${item.date}</strong> -- > ${item.temperature} °C
-                    </div>
-
-                    <div class="btn-group btn-group-sm">
-                        <button 
-                            class="btn btn-warning edit-btn"
-                            data-city="${item.city}"
-                            data-date="${item.date}"
-                            data-temp="${item.temperature}">
-                            ${getMessage("ui.edit")}
-                        </button>
-
-                        <button 
-                            class="btn btn-danger delete-btn"
-                            data-city="${item.city}"
-                            data-date="${item.date}">
-                            ${getMessage("ui.delete")}
-                        </button>
-                    </div>
-
-                </li>
+// 数据处理模块
+const DataHandler = {
+    handleSearch: function(formData) {
+        fetch("/search", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log("FULL DATA:", data);
+            
+            // 更新天气区域
+            const weather = data.weather;
+            const weatherArea = document.getElementById("weather-area");
+            
+            if (weather.status === "error") {
+                Utils.logToTerminal(weather.message, "error");
+                if (weatherArea) weatherArea.innerHTML = "";
+            } else {
+                const w = weather.data;
+                if (weatherArea) {
+                    weatherArea.innerHTML = `
+                        <div>
+                            <strong>${w.city}</strong><br>
+                            Temp: ${w.temp} °C<br>
+                            ${w.weather}<br>
+                            Humidity: ${w.humidity}%
+                        </div>
+                    `;
+                }
+            }
+            
+            const resultArea = document.getElementById("result-area");
+            if (data.db.status === "error") {
+                Utils.logToTerminal(data.db.message, "error");
+            }
+            Utils.logToTerminal(Utils.getMessage("success.search") || "Search completed", "success");
+            
+            if (!data.db.data || data.db.data.length === 0) {
+                Utils.logToTerminal(Utils.getMessage("info.no_data"));
+                if (resultArea) resultArea.innerHTML = "";
+                return;
+            }
+            
+            // 渲染列表
+            let html = "<h5 class='mb-3'>{{msg.get('ui.result_title')}}</h5><ul class='list-group'>";
+            
+            data.db.data.forEach(item => {
+                html += `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>${item.date}</strong> -- > ${item.temperature} °C
+                        </div>
+                        <div class="btn-group btn-group-sm">
+                            <button 
+                                class="btn btn-warning edit-btn"
+                                data-city="${item.city}"
+                                data-date="${item.date}"
+                                data-temp="${item.temperature}">
+                                ${Utils.getMessage("ui.edit")}
+                            </button>
+                            <button 
+                                class="btn btn-danger delete-btn"
+                                data-city="${item.city}"
+                                data-date="${item.date}">
+                                ${Utils.getMessage("ui.delete")}
+                            </button>
+                        </div>
+                    </li>
                 `;
-        });
-
-        html += "</ul>";
-
-        resultArea.innerHTML = html;
-        // 绑定 edit
-        document.querySelectorAll(".edit-btn").forEach(btn => {
-            btn.addEventListener("click", function () {
-                const city = this.dataset.city;
-                const date = this.dataset.date;
-                const temp = this.dataset.temp;
-
-                openEditModal(city, date, temp);
+            });
+            
+            html += "</ul>";
+            if (resultArea) resultArea.innerHTML = html;
+            
+            // 绑定编辑按钮
+            document.querySelectorAll(".edit-btn").forEach(btn => {
+                btn.addEventListener("click", function() {
+                    const city = this.dataset.city;
+                    const date = this.dataset.date;
+                    const temp = this.dataset.temp;
+                    ModalHandler.openEditModal(city, date, temp);
+                });
+            });
+            
+            // 绑定删除按钮
+            document.querySelectorAll(".delete-btn").forEach(btn => {
+                btn.addEventListener("click", function() {
+                    const city = this.dataset.city;
+                    const date = this.dataset.date;
+                    DataHandler.handleDelete(city, date);
+                });
             });
         });
-
-        // 绑定 delete
-        document.querySelectorAll(".delete-btn").forEach(btn => {
-            btn.addEventListener("click", function () {
-                const city = this.dataset.city;
-                const date = this.dataset.date;
-                handleDelete(city, date);
-            });                               
+    },
+    
+    handleDelete: function(city, date) {
+        if (!confirm(Utils.getMessage("ui.confirm_delete", { city, date }))) return;
+        
+        fetch("/delete", {
+            method: "POST",
+            body: new URLSearchParams({ city, date })
+        })
+        .then(res => res.text())
+        .then(msg => {
+            Utils.logToTerminal(msg, "success");
+            location.reload();
         });
-    });
-    function handleDelete(city, date) {
-    if (!confirm(getMessage("ui.confirm_delete", { city, date }))) return;
-
-    fetch("/delete", {
-        method: "POST",
-        body: new URLSearchParams({ city, date })
-    })
-    .then(res => res.text())
-    .then(msg => {
-        ogToTerminal(msg, "success");
-        location.reload();
-    });
+    },
+    
+    handleEdit: function(city, date, temperature) {
+        fetch("/edit", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({ 
+                city: city, 
+                date: date, 
+                temperature: temperature 
+            })
+        })
+        .then(res => res.text())
+        .then(msg => {
+            Utils.logToTerminal(msg, "success");
+            location.reload();
+        })
+        .catch(error => {
+            Utils.logToTerminal("Edit failed: " + error, "error");
+        });
     }
-    function logToTerminal(message, type="info") {
-    const terminal = document.getElementById("terminal-log");
+};
 
-    let color = "black";
-    if (type === "error") color = "red";
-    if (type === "success") color = "green";
-
-    terminal.innerHTML += `<div style="color:${color}">> ${message}</div>`;
-    terminal.scrollTop = terminal.scrollHeight;
+// 模态框处理模块
+const ModalHandler = {
+    openEditModal: function(city, date, temp) {
+        // 查找或创建编辑模态框
+        let editModal = document.getElementById('editModal');
+        
+        if (!editModal) {
+            // 动态创建编辑模态框
+            editModal = document.createElement('div');
+            editModal.id = 'editModal';
+            editModal.className = 'modal fade';
+            editModal.tabIndex = '-1';
+            editModal.innerHTML = `
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">${Utils.getMessage("ui.edit_title") || "Edit Record"}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="edit-form">
+                                <div class="mb-3">
+                                    <label class="form-label">City</label>
+                                    <input type="text" class="form-control" id="edit-city" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="edit-date" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Temperature (°C)</label>
+                                    <input type="number" class="form-control" id="edit-temp" step="0.1" required>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${Utils.getMessage("ui.cancel") || "Cancel"}</button>
+                            <button type="button" class="btn btn-primary" id="save-edit-btn">${Utils.getMessage("ui.save") || "Save"}</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(editModal);
+        }
+        
+        // 填充表单数据
+        const cityInput = document.getElementById('edit-city');
+        const dateInput = document.getElementById('edit-date');
+        const tempInput = document.getElementById('edit-temp');
+        
+        if (cityInput){
+            cityInput.value = city;
+            cityInput.disabled = true;
+        } if (dateInput){
+            dateInput.value = date;
+            dateInput.disabled = true;
+        } 
+        if (tempInput) tempInput.value = temp;
+        
+        // 移除旧的保存事件监听器
+        const saveBtn = document.getElementById('save-edit-btn');
+        const newSaveBtn = saveBtn.cloneNode(true);
+        saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+        
+        // 添加新的保存事件监听器
+        newSaveBtn.addEventListener('click', () => {
+            const newTemp = document.getElementById('edit-temp').value;
+            if (newTemp && !isNaN(newTemp)) {
+                DataHandler.handleEdit(city, date, newTemp);
+                const modal = bootstrap.Modal.getInstance(editModal);
+                if (modal) modal.hide();
+            } else {
+                Utils.logToTerminal("Please enter a valid temperature", "error");
+            }
+        });
+        
+        // 显示模态框
+        const modal = new bootstrap.Modal(editModal);
+        modal.show();
+    },
+    
+    openNewModal: function() {
+        const modal = new bootstrap.Modal(document.getElementById('inputModal'));
+        modal.show();
     }
-});
+};
+
+// 事件绑定模块
+const EventBinder = {
+    init: function() {
+        // 语言切换
+        const langSwitch = document.getElementById("lang-switch");
+        if (langSwitch) {
+            langSwitch.addEventListener("change", function() {
+                const lang = this.value;
+                fetch("/set_language", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ lang: lang })
+                }).then(() => location.reload());
+            });
+        }
+        
+        // 新建按钮
+        const newBtn = document.getElementById("new-btn");
+        if (newBtn) {
+            newBtn.addEventListener("click", function() {
+                ModalHandler.openNewModal();
+            });
+        }
+        
+        // 搜索表单
+        const searchForm = document.getElementById("search-form");
+        if (searchForm) {
+            searchForm.addEventListener("submit", function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                DataHandler.handleSearch(formData);
+            });
+        }
+    }
+};
+
+// 初始化应用
+EventBinder.init();
 </script>
+
 {% include "components/input.html" %}
 {% endblock %}
