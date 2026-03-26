@@ -2,7 +2,8 @@
     "success": {
         "insert": "Weather record added successfully",
         "update": "Weather record updated successfully",
-        "delete": "Weather record deleted successfully"
+        "delete": "Weather record deleted successfully",
+        "search": "Search completed"
     },
     "error": {
         "input": {
@@ -16,6 +17,9 @@
         "not_found": "Record not found",
         "unknown": "Unknown Error"
         }
+    },
+    "info":{
+        "no_data": "City Data Not Found"
     },
     "ui":{
         "new": "New",

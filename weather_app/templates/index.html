@@ -109,32 +109,31 @@ document.getElementById("search-form").addEventListener("submit", function(e) {
         const db = data.db;
         const weather = data.weather;
         const weatherArea = document.getElementById("weather-area");
-
-        if (!data.weather) {
-            weatherArea.innerHTML = "<p>No weather data.</p>";
+        
+        if (weather.status === "error") {
+            logToTerminal(weather.message, "error");
+            weatherArea.innerHTML = "";
         } else {
-            if (!weather || weather.status !== "success") {
-                weatherArea.innerHTML = "<p>No weather data.</p>";
-            } else {
-                const w = weather.data;
-                weatherArea.innerHTML = `
-                    <div>
-                        <strong>${w.city}</strong><br>
-                        Temp: ${w.temp} °C<br>
-                        ${w.weather}<br>
-                        Humidity: ${w.humidity}%
-                    </div>
-                `;
-            }
+            const w = weather.data;
+            weatherArea.innerHTML = `
+                <div>
+                    <strong>${w.city}</strong><br>
+                    Temp: ${w.temp} °C<br>
+                    ${w.weather}<br>
+                    Humidity: ${w.humidity}%
+                </div>
+            `;
         }
+
         const resultArea = document.getElementById("result-area");
         if (db.status === "error") {
-            resultArea.innerHTML = `<p class="text-danger">${db.message}</p>`;
-            return;
+            logToTerminal(db.message, "error");
         }
+        logToTerminal(getMessage("success.search") || "Search completed", "success");
 
         if (!db.data || db.data.length === 0) {
-            resultArea.innerHTML = "<p>No data found.</p>";
+            logToTerminal(getMessage("info.no_data"));
+            resultArea.innerHTML = "";
             return;
         }
 
@@ -202,10 +201,20 @@ document.getElementById("search-form").addEventListener("submit", function(e) {
     })
     .then(res => res.text())
     .then(msg => {
-        console.log(msg);
+        ogToTerminal(msg, "success");
         location.reload();
     });
-}
+    }
+    function logToTerminal(message, type="info") {
+    const terminal = document.getElementById("terminal-log");
+
+    let color = "black";
+    if (type === "error") color = "red";
+    if (type === "success") color = "green";
+
+    terminal.innerHTML += `<div style="color:${color}">> ${message}</div>`;
+    terminal.scrollTop = terminal.scrollHeight;
+    }
 });
 </script>
 {% include "components/input.html" %}
