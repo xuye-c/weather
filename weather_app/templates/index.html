@@ -15,8 +15,8 @@
     <!-- 搜索表单（放右边） -->
     <form id="search-form" class="d-flex gap-2 mb-0">
         <input type="text" name="city" placeholder="{{ msg.get('ui.city_placeholder') }}" class="form-control form-control-sm" required>
-        <input type="date" name="{{ msg.get('ui.start_date') }}" class="form-control form-control-sm">
-        <input type="date" name="{{ msg.get('ui.end_date') }}" class="form-control form-control-sm">
+        <input type="date" name="start_date" class="form-control form-control-sm">
+        <input type="date" name="end_date" class="form-control form-control-sm">
         <button type="submit" class="btn btn-success btn-sm" style="min-width: 80px;">{{ msg.get('ui.search') }}</button>
     </form>
 
@@ -100,7 +100,7 @@ const DataHandler = {
         })
         .then(res => res.json())
         .then(data => {
-            console.log("FULL DATA:", data);
+            //console.log("FULL DATA:", data);
             
             // 更新天气区域
             const weather = data.weather;
@@ -124,6 +124,7 @@ const DataHandler = {
             }
             
             const resultArea = document.getElementById("result-area");
+            if(resultArea) resultArea.innerHTML = "";
             if (data.db.status === "error") {
                 Utils.logToTerminal(data.db.message, "error");
             }
