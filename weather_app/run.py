@@ -6,10 +6,13 @@ from service.weather_api import WeatherAPI
 from service.export import export_manager
 from service.Googlemap_api import GoogleMapsAPI 
 from datetime import datetime
+from dotenv import load_dotenv
+import os
 
+load_dotenv("weather.env")
 msg = MessageManager()
 app = Flask(__name__)
-app.secret_key = 'abcd1234'
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 @app.route("/api/export/<format>", methods=["GET", "POST"])
 def export_data(format):

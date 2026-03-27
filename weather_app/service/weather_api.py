@@ -2,8 +2,12 @@
 
 import requests
 import os
+from dotenv import load_dotenv
+import os
 
-API_KEY = "6254bdfa168f19b9a37838ab44be6134"
+load_dotenv("weather.env")  # 指定你的文件
+
+API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
 class WeatherAPI:
 
