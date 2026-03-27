@@ -2,6 +2,8 @@
 
 A mini backend project from [PM Accelerator](https://www.linkedin.com/school/pmaccelerator/)
 
+中文demo视频: [demo](https://drive.google.com/file/d/1r-JeD-clMWV4OyrwKsteyqZOtqeJ64QS/view?usp=sharing)
+
 ---
 
 ## Overview
