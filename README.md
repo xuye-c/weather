@@ -106,6 +106,18 @@ Get Real-Time Weather
 curl -X POST http://127.0.0.1:5000/api/weather \
   -d "city=Beijing"
 ```
+Get Google Maps Link
+
+```bash
+# GET request (city in URL)
+curl -X GET "http://127.0.0.1:5000/api/map/Beijing"
+
+# POST request (city in form data)
+curl -X POST http://127.0.0.1:5000/api/map \
+  -d "city=Shanghai"
+
+```
+
 Export Data
 
 Export specific city:
