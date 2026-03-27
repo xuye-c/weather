@@ -59,7 +59,7 @@
     * csvFactory(?)
 * Exceptions
 * GoogleMapAPI
-### Micmic Frontend view
+### Micmic Frontend view(not planned)
 * Views
     * Search bar
         * textbase city name
