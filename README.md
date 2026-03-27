@@ -2,7 +2,7 @@
 
 A mini backend project from [PM Accelerator](https://www.linkedin.com/school/pmaccelerator/)
 
-结结巴巴的中文demo视频: [demo](https://drive.google.com/file/d/1r-JeD-clMWV4OyrwKsteyqZOtqeJ64QS/view?usp=sharing)
+A video demo: [demo](https://drive.google.com/file/d/1k9lUDyvKz3sapEYYMCAfYta47Echlaeu/view?usp=sharing)
 
 ---
 
@@ -50,7 +50,7 @@ weather_app/
 
 ---
 
-## ⚙️ Setup & Run
+## Setup & Run
 
 ### 1. Install dependencies
 
