@@ -14,6 +14,20 @@ msg = MessageManager()
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
+@app.route("/api/weather", methods=["POST"])
+def get_weather_only():
+    """单独获取天气数据的接口"""
+    city = request.form.get("city")
+    
+    if not city or not city.strip():
+        return jsonify({
+            "status": "error",
+            "message": "City cannot be empty"
+        }), 400
+    
+    weather_result = WeatherAPI.get_current_weather(city)
+    return jsonify(weather_result)
+    
 @app.route("/api/export/<format>", methods=["GET", "POST"])
 def export_data(format):
     """
@@ -99,10 +113,8 @@ def search():
     start = request.form.get("start_date")
     end = request.form.get("end_date")
     db_result = InputManager.search(city, start, end)
-    weather_result = WeatherAPI.get_current_weather(city)
     return jsonify({
         "db": db_result,
-        "weather": weather_result
     })
 
 @app.route("/api/insert", methods=["POST"])

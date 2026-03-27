@@ -92,8 +92,10 @@ curl -X POST http://127.0.0.1:5000/api/search \
 ```
 With date range:
 ```bash
--d "start_date=2024-01-01" \
--d "end_date=2024-01-10"
+curl -X POST http://127.0.0.1:5000/api/search \
+  -d "city=Beijing"\
+  -d "start_date=2024-01-01" \
+  -d "end_date=2024-01-10"
 ```
 Delete Data
 ```bash
