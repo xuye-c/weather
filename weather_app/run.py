@@ -4,6 +4,7 @@ from configs.messageManager import MessageManager
 from db.init_db import init_db
 from service.weather_api import WeatherAPI
 from service.export import export_manager
+from service.Googlemap_api import GoogleMapsAPI 
 from datetime import datetime
 
 msg = MessageManager()
@@ -112,6 +113,32 @@ def insert():
 @app.before_first_request
 def setup():
     init_db()
+
+@app.route("/api/map/<city>", methods=["GET"])
+def get_map(city):
+    """
+    Get Google Maps link for a city
+    """
+    result = GoogleMapsAPI.get_map_link(city)
+    
+    if result["status"] == "error":
+        return jsonify(result), 400
+    
+    return jsonify(result)
+
+@app.route("/api/map", methods=["POST"])
+def get_map_post():
+    """
+    Get Google Maps link for a city (POST method with form data)
+    
+    """
+    city = request.form.get("city")
+    result = GoogleMapsAPI.get_map_link(city)
+    
+    if result["status"] == "error":
+        return jsonify(result), 400
+    
+    return jsonify(result)
 
 if __name__ == '__main__':
     app.run(debug=True)
